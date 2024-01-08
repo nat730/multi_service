@@ -1,6 +1,6 @@
 on:
   workflow_run:
-    workflows: [codecove]
+    workflows: [Code Coverage]
     types:
       - completed
 jobs:
