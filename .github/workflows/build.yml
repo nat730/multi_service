@@ -12,14 +12,13 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Success Step
-        run: echo 'The triggering workflow passed'
 
   build:
     name: Build Docker image
-    runs-on: ${{ matrix.os }} # specify the build machine
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-20.04]
+        os: [ubuntu-latest]
         node-version: ['19.x', '20.x']
 
     steps:
