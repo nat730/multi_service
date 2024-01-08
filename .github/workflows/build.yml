@@ -2,41 +2,50 @@ name: Build
 
 on:
   workflow_run:
-    workflows: [Code Coverage]
+    workflows: ["Code Coverage"]
     types:
       - completed
+
 jobs:
-    build:
-        name: Build Docker image
-        runs-on: ${{ matrix.os }} # specify the build machine
-        strategy:
-          matrix:
-            os: [ubuntu-latest, ubuntu-20.04]
-            node-version: ['19.x', '20.x']
-            
-        steps:
-              
-        - # checkout to the repository on the build machine
-            name: Checkout
-            uses: actions/checkout@v3
+  on-success:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Success Step
+        run: echo 'The triggering workflow passed'
 
-        - # login to Docker Hub using the secrets provided
-            name: Login to Docker Hub
-            uses: docker/login-action@v3
-            with:
-                username: ${{ secrets.DOCKERHUB_USERNAME }}
-                password: ${{ secrets.DOCKERHUB_TOKEN }}
+  build:
+    name: Build Docker image
+    runs-on: ${{ matrix.os }} # specify the build machine
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-20.04]
+        node-version: ['19.x', '20.x']
 
-        - # create a build kit builder instance
-            name: Set up Docker Buildx
-            uses: docker/setup-buildx-action@v2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-        - # build the container image and push it to Docker Hub with \
-          # the name ci-js-docker.
-            name: Build and push
-            uses: docker/build-push-action@v4
-            with:
-              context: .
-              file: ./Dockerfile
-              push: true
-              tags: ${{ secrets.DOCKERHUB_USERNAME }}/ci-js-docker:latest-${{ github.ref_name }}-${{ matrix.os }}-nodev${{ matrix.node-version }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ci-js-docker:latest-${{ github.ref_name }}-${{ matrix.os }}-nodev${{ matrix.node-version }}
+
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - name: Failure Step
+        run: echo 'The triggering workflow failed'
