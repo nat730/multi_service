@@ -1,10 +1,10 @@
 name: tuto-ci-docker
 
 on: # specify the build to trigger the automated ci/cd
-    push:
-        branches:
-            - "main"
-            - "develop"
+  workflow_run:
+    workflows: ["Update main"]
+    types:
+      - completed
 jobs:
     build:
         name: Build Docker image
