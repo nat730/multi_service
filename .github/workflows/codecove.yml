@@ -1,4 +1,4 @@
-name: Code Coverag
+name: Code Coverage
 
 on:
   push:
@@ -24,4 +24,4 @@ jobs:
         run: npm install
 
       - name: Run the tests
-        run: npm test -- --coverage
+        run: npm tst -- --coverage
