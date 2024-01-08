@@ -1,10 +1,10 @@
 name: Code Coverage
 
 on:
-  workflow_run:
-    workflows: ["tuto-ci-docker"]
-    types:
-      - completed
+  push:
+        branches:
+            - "main"
+            - "develop"
 
 jobs:
   build:
