@@ -11,6 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
+    
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v1
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+    
       - name: Success Step
         run: echo 'The triggering workflow passed'
 
